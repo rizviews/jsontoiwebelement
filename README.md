@@ -58,7 +58,6 @@ namespace SampleNameSpace
             JsonToIWebElement = new JsonToIWebElement("DefinitionFile.json", driver);
         }
         
-        [Fact]
         public void ShouldReturnElementFromJson()
         {
             ChromeDriver driver = new ChromeDriver();

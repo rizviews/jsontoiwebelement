@@ -2,13 +2,14 @@
 <package >
   <metadata>
     <id>Ridia.TestAutomation.JsonToIWebElement</id>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <title>JsonToIWebElement</title>
     <authors>Rizwan</authors>
     <owners>Rizwan</owners>
+	<projectUrl>https://github.com/rizviews/jsontoiwebelement</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Reads element definition from Json file and convert into Selenium IWebElement</description>
-    <releaseNotes>fixing dependency issue</releaseNotes>
+    <releaseNotes>Added project Url</releaseNotes>
     <copyright>Copyright 2017 Ridia</copyright>
     <tags>selenium automation</tags>
 	<dependencies>
