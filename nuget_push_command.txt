@@ -1,0 +1,15 @@
+skynet tracking number: 23874754804
+
+C:\Personal\jsontoiwebelement\JsonToIWebElement>..\nuget.exe pack JsonToIWebElement.csproj
+Attempting to build package from 'JsonToIWebElement.csproj'.
+MSBuild auto-detection: using msbuild version '15.1.1012.6693' from 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\bin'.
+Packing files from 'C:\Personal\jsontoiwebelement\JsonToIWebElement\bin\Debug'.
+Using 'JsonToIWebElement.nuspec' for metadata.
+Found packages.config. Using packages listed as dependencies
+Successfully created package 'C:\Personal\jsontoiwebelement\JsonToIWebElement\Ridia.TestAutomation.JsonToIWebElement.1.0.3.nupkg'.
+
+C:\Personal\jsontoiwebelement\JsonToIWebElement>..\nuget.exe push Ridia.TestAutomation.JsonToIWebElement.1.0.3.nupkg 4c33c09b-9478-48dd-8b7b-de5f0a4ca78b -Source https://www.nuget.org/api/v2/package
+Pushing Ridia.TestAutomation.JsonToIWebElement.1.0.3.nupkg to 'https://www.nuget.org/api/v2/package'...
+  PUT https://www.nuget.org/api/v2/package/
+  Created https://www.nuget.org/api/v2/package/ 12916ms
+Your package was pushed.

@@ -16,6 +16,7 @@
     {
         private List<PageElementModel> pageElements;
         private IWebDriver driver;
+        private string basePath = string.Empty;
 
         private List<PageElementModel> PageElements { get { return this.pageElements; } set { this.pageElements = value; } }
 
@@ -24,10 +25,15 @@
         /// </summary>
         /// <param name="definitionFileName">Name of the file containing JSON definition</param>
         /// <param name="driver">Intance of <see cref="IWebDriver"/></param>
-        public JsonToIWebElement(string definitionFileName, IWebDriver driver)
+        public JsonToIWebElement(string definitionFileName, IWebDriver driver,string basePath = "")
         {
             PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
             this.driver = driver;
+
+            if (!string.IsNullOrEmpty(basePath))
+            {
+                this.basePath = basePath;
+            }
         }
 
         /// <summary>
@@ -39,10 +45,20 @@
         public IWebElement GetElement (string elementName, IWebDriver webDriver = null)
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
-
+            
             if (model.How == "file")
             {
-                List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(model.Definition));
+                string filePath = string.Empty;
+
+                if (string.IsNullOrEmpty(this.basePath))
+                {
+                    filePath = model.Definition;
+                }
+                else
+                {
+                    filePath = System.IO.Path.Combine(basePath,model.Definition);
+                }
+                List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(filePath));
                 model = models.Find(item => item.Name == elementName);
             }
 
