@@ -44,26 +44,26 @@ www.google.com
 ```csharp
 namespace SampleNameSpace
 {
-    using FluentAssertions;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
     using Ridia.TestAutomation;
 
-    public class SamplePage
+    [TestClass]
+    public class JsonToIWebElementTest
     {
-        private JsonToIWebElement jsonToIWebElement;
-        public JsonToIWebElement JsonToIWebElement { get { return this.jsonToIWebElement; } set { this.jsonToIWebElement = value; } }
-        
-        public SamplePage(IWebDriver driver)
-        {
-            JsonToIWebElement = new JsonToIWebElement("DefinitionFile.json", driver);
-        }
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
         public void ShouldReturnElementFromJson()
         {
             ChromeDriver driver = new ChromeDriver();
             driver.Navigate().GoToUrl("https://www.google.com");
-            IWebElement element = JsonToIWebElement.GetElement("SearchBox");
+            JsonToIWebElement pageElement = new JsonToIWebElement("Google.json", driver);
+            IWebElement element = pageElement.GetElement("SearchBox");
             element.SendKeys("test with xunit");
         }
+    }
 }
 ```

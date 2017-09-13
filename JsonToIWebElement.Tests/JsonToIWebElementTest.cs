@@ -1,7 +1,9 @@
 ﻿namespace JsonToIWebElement.Tests
 {
-    using Ridia.TestAutomation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
+    using Ridia.TestAutomation;
 
     /// <summary>
     /// 
@@ -13,9 +15,13 @@
         /// 
         /// </summary>
         [TestMethod]
-        public void ShouldParseOneElementSuccessfully()
+        public void ShouldReturnElementFromJson()
         {
-            
+            ChromeDriver driver = new ChromeDriver();
+            driver.Navigate().GoToUrl("https://www.google.com");
+            JsonToIWebElement pageElement = new JsonToIWebElement("Google.json", driver);
+            IWebElement element = pageElement.GetElement("SearchBox");
+            element.SendKeys("test with xunit");
         }
     }
 }
