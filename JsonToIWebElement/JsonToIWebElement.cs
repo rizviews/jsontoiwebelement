@@ -25,6 +25,7 @@
         /// </summary>
         /// <param name="definitionFileName">Name of the file containing JSON definition</param>
         /// <param name="driver">Intance of <see cref="IWebDriver"/></param>
+        /// <param name="basePath">An optional parameter to hold base directory</param>
         public JsonToIWebElement(string definitionFileName, IWebDriver driver,string basePath = "")
         {
             PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
