@@ -23,5 +23,15 @@
             IWebElement element = pageElement.GetElement("SearchBox");
             element.SendKeys("test with xunit");
         }
+
+        [TestMethod]
+        public void ShouldGetDefinition()
+        {
+            JsonToIWebElement pageElement = new JsonToIWebElement("Google.json");
+
+            string definition = pageElement.GetDefinition("SearchBox");
+
+            Assert.IsNotNull(definition);
+        }
     }
 }

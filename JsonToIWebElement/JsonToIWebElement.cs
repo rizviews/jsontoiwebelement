@@ -29,11 +29,50 @@
         public JsonToIWebElement(string definitionFileName, IWebDriver driver,string basePath = "")
         {
             PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+
+            this.ResolveElementsFromFile();
+
             this.driver = driver;
 
             if (!string.IsNullOrEmpty(basePath))
             {
                 this.basePath = basePath;
+            }
+        }
+
+        /// <summary>
+        /// Instrantiate an instance of <see cref="JsonToIWebElement"/>
+        /// </summary>
+        /// <param name="definitionFileName">Name of the file containing JSON definition</param>
+        public JsonToIWebElement(string definitionFileName)
+        {
+            PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+
+            this.ResolveElementsFromFile();
+        }
+
+        private void ResolveElementsFromFile()
+        {
+            for (int i=0; i<PageElements.Count;i++)
+            {
+                PageElementModel model = PageElements[i];
+
+                if (model.How == "file")
+                {
+                    string filePath = string.Empty;
+
+                    if (string.IsNullOrEmpty(this.basePath))
+                    {
+                        filePath = model.Definition;
+                    }
+                    else
+                    {
+                        filePath = System.IO.Path.Combine(basePath, model.Definition);
+                    }
+
+                    List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(filePath));
+                    PageElements[i] = models.Find(item => item.Name == model.Name);
+                }
             }
         }
 
@@ -47,22 +86,9 @@
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
             
-            if (model.How == "file")
-            {
-                string filePath = string.Empty;
-
-                if (string.IsNullOrEmpty(this.basePath))
-                {
-                    filePath = model.Definition;
-                }
-                else
-                {
-                    filePath = System.IO.Path.Combine(basePath,model.Definition);
-                }
-                List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(filePath));
-                model = models.Find(item => item.Name == elementName);
-            }
-
+            if (model == null)
+                throw new Exception("Element not found!");
+            
             Type type = typeof(By);
             MethodInfo methodInfo = type.GetMethod(model.How);
 
@@ -70,6 +96,7 @@
             {
                 return webDriver.FindElement((By)methodInfo.Invoke(null, new object[] { model.Definition }));
             }
+
             return driver.FindElement((By)methodInfo.Invoke(null, new object[] { model.Definition }));
         }
 
@@ -92,6 +119,16 @@
             }
 
             return elements;
+        }
+
+        public string GetDefinition(string elementName)
+        {
+            PageElementModel model = PageElements.Find(item => item.Name == elementName);
+
+            if (model == null)
+                throw new Exception("Element not found!");
+
+            return model.Definition;
         }
     }
 }
