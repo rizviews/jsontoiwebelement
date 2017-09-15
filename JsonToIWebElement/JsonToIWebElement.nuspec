@@ -2,16 +2,16 @@
 <package >
   <metadata>
     <id>Ridia.TestAutomation.JsonToIWebElement</id>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <title>JsonToIWebElement</title>
     <authors>Rizwan</authors>
     <owners>Rizwan</owners>
 	<projectUrl>https://github.com/rizviews/jsontoiwebelement</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Reads element definition from Json file and convert into Selenium IWebElement</description>
-    <releaseNotes>1. Added another constructor to instantiate without driver instance (that means have to pass IWebDriver instance during GetElement call)
-	2. Added method GetDefinition to return definition of the element.
-	3. Added method to resolve all elements in the constructor.
+    <releaseNotes>1. Added method to return By locator from Json definition
+	2. Added default empty constructor.
+	3. Added method to reload element definition from another definition file without reinstantiating JsonToIWebElement instance.
 	</releaseNotes>
     <copyright>Copyright 2017 Ridia</copyright>
     <tags>selenium automation</tags>

@@ -21,6 +21,11 @@
         private List<PageElementModel> PageElements { get { return this.pageElements; } set { this.pageElements = value; } }
 
         /// <summary>
+        /// Default empty constructor
+        /// </summary>
+        public JsonToIWebElement(){}
+
+        /// <summary>
         /// Instrantiate an instance of <see cref="JsonToIWebElement"/>
         /// </summary>
         /// <param name="definitionFileName">Name of the file containing JSON definition</param>
@@ -30,14 +35,14 @@
         {
             PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
 
-            this.ResolveElementsFromFile();
-
-            this.driver = driver;
-
             if (!string.IsNullOrEmpty(basePath))
             {
                 this.basePath = basePath;
             }
+
+            this.ResolveElementsFromFile();
+
+            this.driver = driver;
         }
 
         /// <summary>
@@ -74,6 +79,16 @@
                     PageElements[i] = models.Find(item => item.Name == model.Name);
                 }
             }
+        }
+
+        /// <summary>
+        /// Reload updated definition from given <paramref name="definitionFileName"/> />
+        /// </summary>
+        /// <param name="definitionFileName">Definition file name to reload from</param>
+        public void ReloadElementDefinition(string definitionFileName)
+        {
+            PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+            this.ResolveElementsFromFile();
         }
 
         /// <summary>
@@ -121,6 +136,11 @@
             return elements;
         }
 
+        /// <summary>
+        /// Method to get definition of the element
+        /// </summary>
+        /// <param name="elementName"></param>
+        /// <returns></returns>
         public string GetDefinition(string elementName)
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
@@ -129,6 +149,24 @@
                 throw new Exception("Element not found!");
 
             return model.Definition;
+        }
+
+        /// <summary>
+        /// Method to get <see cref="By"/> locator of the element 
+        /// </summary>
+        /// <param name="elementName">Name of the element</param>
+        /// <returns><see cref="By"/> locator to find this element</returns>
+        public By GetByLocator(string elementName)
+        {
+            PageElementModel model = PageElements.Find(item => item.Name == elementName);
+
+            if (model == null)
+                throw new Exception("Element not found!");
+
+            Type type = typeof(By);
+            MethodInfo methodInfo = type.GetMethod(model.How);
+
+            return (By)methodInfo.Invoke(null, new object[] { model.Definition });
         }
     }
 }
