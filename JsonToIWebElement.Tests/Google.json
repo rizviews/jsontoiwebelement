@@ -3,5 +3,10 @@
 		"name": "SearchBox",
 		"how": "file",
 		"definition": "TestElements.json"
+	},
+	{
+		"name": "SearchBoxWithToken",
+		"how": "Name",
+		"definition": "{name}"
 	}
 ]

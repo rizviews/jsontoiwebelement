@@ -97,22 +97,30 @@
         /// <param name="elementName">Name of the element defined in the definition file</param>
         /// <param name="webDriver">Instance of the <see cref="IWebDriver"/> to find element</param>
         /// <returns></returns>
-        public IWebElement GetElement (string elementName, IWebDriver webDriver = null)
+        public IWebElement GetElement (string elementName, IWebDriver webDriver = null, string elementValue = "")
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
-            
+
             if (model == null)
                 throw new Exception("Element not found!");
-            
+
+            string definition = model.Definition;
+
+            if (!string.IsNullOrEmpty(elementValue))
+            {
+                definition = this.ReplaceTokenInElementDefinition(model.Definition, elementValue);
+            }
+
             Type type = typeof(By);
+            
             MethodInfo methodInfo = type.GetMethod(model.How);
 
             if (webDriver != null)
             {
-                return webDriver.FindElement((By)methodInfo.Invoke(null, new object[] { model.Definition }));
+                return webDriver.FindElement((By)methodInfo.Invoke(null, new object[] { definition }));
             }
 
-            return driver.FindElement((By)methodInfo.Invoke(null, new object[] { model.Definition }));
+            return driver.FindElement((By)methodInfo.Invoke(null, new object[] { definition }));
         }
 
         /// <summary>
@@ -156,17 +164,34 @@
         /// </summary>
         /// <param name="elementName">Name of the element</param>
         /// <returns><see cref="By"/> locator to find this element</returns>
-        public By GetByLocator(string elementName)
+        public By GetByLocator(string elementName, string elementValue = "")
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
 
             if (model == null)
                 throw new Exception("Element not found!");
 
+            string definition = model.Definition;
+
+            if (!string.IsNullOrEmpty(elementValue))
+            {
+                definition = this.ReplaceTokenInElementDefinition(model.Definition, elementValue);
+            }
             Type type = typeof(By);
             MethodInfo methodInfo = type.GetMethod(model.How);
 
-            return (By)methodInfo.Invoke(null, new object[] { model.Definition });
+            return (By)methodInfo.Invoke(null, new object[] { definition });
+        }
+
+        private string ReplaceTokenInElementDefinition(string originalDefinition, string replaceWith)
+        {
+            int lastIndex = originalDefinition.LastIndexOf("}");
+            int firstIndex = originalDefinition.IndexOf("{");
+
+            string token = originalDefinition.Substring(firstIndex, (lastIndex - firstIndex) + 1);
+
+            return originalDefinition.Replace(token, replaceWith);
+            
         }
     }
 }

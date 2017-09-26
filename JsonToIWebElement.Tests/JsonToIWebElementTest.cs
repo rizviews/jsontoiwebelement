@@ -1,20 +1,20 @@
 ﻿namespace JsonToIWebElement.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
     using Ridia.TestAutomation;
+    using FluentAssertions;
 
     /// <summary>
     /// 
     /// </summary>
-    [TestClass]
     public class JsonToIWebElementTest
     {
         /// <summary>
         /// 
         /// </summary>
-        [TestMethod]
+        [Fact]
         public void ShouldReturnElementFromJson()
         {
             ChromeDriver driver = new ChromeDriver();
@@ -22,16 +22,33 @@
             JsonToIWebElement pageElement = new JsonToIWebElement("Google.json", driver);
             IWebElement element = pageElement.GetElement("SearchBox");
             element.SendKeys("test with xunit");
+
+            driver.Close();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetDefinition()
         {
             JsonToIWebElement pageElement = new JsonToIWebElement("Google.json");
 
             string definition = pageElement.GetDefinition("SearchBox");
+            definition.Should().NotBeNullOrEmpty();
+        }
 
-            Assert.IsNotNull(definition);
+        [Fact]
+        public void ShouldGetElementWithTokenReplaced()
+        {
+            ChromeDriver driver = new ChromeDriver();
+            driver.Navigate().GoToUrl("https://www.google.com");
+
+            JsonToIWebElement pageElement = new JsonToIWebElement("Google.json", driver);
+
+            IWebElement element = pageElement.GetElement("SearchBoxWithToken",null,"q");
+
+            element.Should().NotBeNull();
+            element.TagName.Should().Be("input");
+
+            driver.Close();
         }
     }
 }
