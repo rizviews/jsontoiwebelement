@@ -50,5 +50,11 @@
 
             driver.Close();
         }
+
+        [Fact]
+        public void ShouldReadContentOfAllFiles()
+        {
+            JsonToIWebElement element = new JsonToIWebElement(@"TestData");
+        }
     }
 }

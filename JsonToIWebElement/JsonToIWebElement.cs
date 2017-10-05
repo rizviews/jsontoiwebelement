@@ -25,8 +25,9 @@
         /// </summary>
         public JsonToIWebElement(){}
 
+       
         /// <summary>
-        /// Instrantiate an instance of <see cref="JsonToIWebElement"/>
+        /// Instantiate an instance of <see cref="JsonToIWebElement"/>
         /// </summary>
         /// <param name="definitionFileName">Name of the file containing JSON definition</param>
         /// <param name="driver">Intance of <see cref="IWebDriver"/></param>
@@ -46,14 +47,28 @@
         }
 
         /// <summary>
-        /// Instrantiate an instance of <see cref="JsonToIWebElement"/>
+        /// Instantiate an instance of <see cref="JsonToIWebElement"/>
         /// </summary>
-        /// <param name="definitionFileName">Name of the file containing JSON definition</param>
-        public JsonToIWebElement(string definitionFileName)
+        /// <param name="definitionFile">Either a definition file name or the relative path of definition files</param>
+        public JsonToIWebElement(string definitionFile)
         {
-            PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+            PageElements = new List<PageElementModel>();
 
-            this.ResolveElementsFromFile();
+            if (File.Exists(definitionFile))
+            {
+                PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFile));
+
+                this.ResolveElementsFromFile();
+            }
+            else if(Directory.Exists(definitionFile))
+            {
+                string[] fileNames = Directory.GetFiles(definitionFile);
+
+                foreach (string fileName in fileNames)
+                {
+                    PageElements.AddRange(JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(fileName)));
+                }
+            }
         }
 
         private void ResolveElementsFromFile()
@@ -120,7 +135,7 @@
                 return webDriver.FindElement((By)methodInfo.Invoke(null, new object[] { definition }));
             }
 
-            return driver.FindElement((By)methodInfo.Invoke(null, new object[] { definition }));
+            return this.driver.FindElement((By)methodInfo.Invoke(null, new object[] { definition }));
         }
 
         /// <summary>
@@ -192,6 +207,11 @@
 
             return originalDefinition.Replace(token, replaceWith);
             
+        }
+
+        public void SetDriver(IWebDriver driver)
+        {
+            this.driver = driver;
         }
     }
 }
