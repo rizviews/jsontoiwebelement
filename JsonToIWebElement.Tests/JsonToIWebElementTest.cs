@@ -1,10 +1,11 @@
-﻿namespace JsonToIWebElement.Tests
+﻿namespace Ridia.TestAutomation.Tests
 {
     using Xunit;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
     using Ridia.TestAutomation;
     using FluentAssertions;
+    using System.IO;
 
     /// <summary>
     /// 
@@ -55,6 +56,20 @@
         public void ShouldReadContentOfAllFiles()
         {
             JsonToIWebElement element = new JsonToIWebElement(@"TestData");
+        }
+
+        [Fact]
+        public void ShouldGenerateAClass()
+        {
+            JsonToNativeElementsConverter jsnc = new JsonToNativeElementsConverter();
+
+            foreach (string file in Directory.GetFiles(@"C:\Nintex_Works\Code\o365-ui-automation\source\O365.UI.Automation.Common\Element\ElementDefinitions","*.json"))
+            {
+                jsnc.ToElements(file, "O365.UI.Automation.Common.Element");
+                
+            }
+
+            //jsnc.ToElements("TestData/TestElements.json");
         }
     }
 }

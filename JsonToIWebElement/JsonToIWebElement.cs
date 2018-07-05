@@ -67,6 +67,8 @@
                 foreach (string fileName in fileNames)
                 {
                     PageElements.AddRange(JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(fileName)));
+
+
                 }
             }
         }
@@ -141,14 +143,9 @@
         /// <summary>
         /// Method to get all <see cref="IWebElement"/> as list
         /// </summary>
-        /// <param name="definitionFileName">Name of the JSON file containing definition of all elements</param>
         /// <returns>Returns all <see cref="IWebElement"/> as a <see cref="List{IWebElement}"/>/></returns>
-        public List<IWebElement> GetAllElements(string definitionFileName = "")
+        public List<IWebElement> GetAllElements()
         {
-            if (definitionFileName != "")
-            {
-                PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
-            }
             List<IWebElement> elements = new List<IWebElement>();
 
             foreach (PageElementModel element in PageElements)
@@ -157,6 +154,11 @@
             }
 
             return elements;
+        }
+
+        public List<PageElementModel> GetPageModels()
+        {
+            return this.PageElements;
         }
 
         /// <summary>
