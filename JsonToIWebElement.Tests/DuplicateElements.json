@@ -1,0 +1,27 @@
+﻿[
+  {
+    "name": "SearchBox",
+    "how": "name",
+    "definition": "q"
+  },
+  {
+    "name": "SearchBox",
+    "how": "Id",
+    "definition": "Some ID"
+  },
+  {
+    "name": "SearchBox2",
+    "how": "Id",
+    "definition": "Some ID again"
+  },
+  {
+    "name": "SearchBox3",
+    "how": "Id",
+    "definition": "Some ID yet again"
+  },
+  {
+    "name": "SearchBox3",
+    "how": "XPath",
+    "definition": "//*[text()='abc']"
+  }
+]

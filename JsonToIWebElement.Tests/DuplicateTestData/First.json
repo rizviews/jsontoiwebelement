@@ -1,0 +1,17 @@
+﻿[
+  {
+    "name": "ElementA",
+    "how": "name",
+    "definition": "q"
+  },
+  {
+    "name": "ElementB",
+    "how": "name",
+    "definition": "q"
+  },
+  {
+    "name": "ElementC",
+    "how": "name",
+    "definition": "q"
+  }
+]

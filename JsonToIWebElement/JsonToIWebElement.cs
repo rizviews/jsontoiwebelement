@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using Newtonsoft.Json;
     using OpenQA.Selenium;
+    using Ridia.TestAutomation.Exceptions;
     using Ridia.TestAutomation.Model;
 
     /// <summary>
@@ -57,7 +59,7 @@
             if (File.Exists(definitionFile))
             {
                 PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFile));
-
+                this.ValidateUniqueElementNames(PageElements);
                 this.ResolveElementsFromFile();
             }
             else if(Directory.Exists(definitionFile))
@@ -68,6 +70,8 @@
                 {
                     PageElements.AddRange(JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(fileName)));
                 }
+
+                this.ValidateUniqueElementNames(PageElements);
             }
         }
 
@@ -115,9 +119,10 @@
         public IWebElement GetElement (string elementName, IWebDriver webDriver = null, string elementValue = "")
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
-
             if (model == null)
-                throw new Exception("Element not found!");
+            {
+                throw new ElementNotFoundException(elementName);
+            }
 
             string definition = model.Definition;
 
@@ -167,9 +172,10 @@
         public string GetDefinition(string elementName)
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
-
             if (model == null)
-                throw new Exception("Element not found!");
+            {
+                throw new ElementNotFoundException(elementName);
+            }
 
             return model.Definition;
         }
@@ -182,9 +188,10 @@
         public By GetByLocator(string elementName, string elementValue = "")
         {
             PageElementModel model = PageElements.Find(item => item.Name == elementName);
-
             if (model == null)
-                throw new Exception("Element not found!");
+            {
+                throw new ElementNotFoundException(elementName);
+            }
 
             string definition = model.Definition;
 
@@ -207,6 +214,15 @@
 
             return originalDefinition.Replace(token, replaceWith);
             
+        }
+
+        private void ValidateUniqueElementNames(IEnumerable<PageElementModel> elements)
+        {
+            var duplicates = elements.GroupBy(x => x.Name).Where(x => x.Count() > 1);
+            if (duplicates != null && duplicates.Any())
+            {
+                throw new DuplicateElementException(duplicates.Select(x => x.Key));
+            }
         }
 
         public void SetDriver(IWebDriver driver)
