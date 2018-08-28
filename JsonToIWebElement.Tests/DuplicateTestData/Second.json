@@ -1,0 +1,12 @@
+﻿[
+  {
+    "name": "ElementB",
+    "how": "name",
+    "definition": "q"
+  },
+  {
+    "name": "ElementD",
+    "how": "name",
+    "definition": "q"
+  }
+]

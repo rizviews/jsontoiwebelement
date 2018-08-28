@@ -49,6 +49,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\DuplicateElementException.cs" />
+    <Compile Include="Exceptions\ElementNotFoundException.cs" />
     <Compile Include="PageElementModel.cs" />
     <Compile Include="JsonToIWebElement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
