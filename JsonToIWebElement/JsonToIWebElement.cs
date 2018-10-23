@@ -20,23 +20,35 @@
         private IWebDriver driver;
         private string basePath = string.Empty;
 
-        private List<PageElementModel> PageElements { get { return this.pageElements; } set { this.pageElements = value; } }
+        private List<PageElementModel> PageElements
+        {
+            get
+            {
+                return this.pageElements;
+            }
+            set
+            {
+                this.pageElements = value;
+            }
+        }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="JsonToIWebElement" /> class.
         /// Default empty constructor
         /// </summary>
-        public JsonToIWebElement(){}
+        public JsonToIWebElement()
+        {
+        }
 
-       
         /// <summary>
-        /// Instantiate an instance of <see cref="JsonToIWebElement"/>
+        /// Initializes a new instance of the <see cref="JsonToIWebElement" /> class.
         /// </summary>
         /// <param name="definitionFileName">Name of the file containing JSON definition</param>
-        /// <param name="driver">Intance of <see cref="IWebDriver"/></param>
+        /// <param name="driver">Instance of <see cref="IWebDriver" /></param>
         /// <param name="basePath">An optional parameter to hold base directory</param>
-        public JsonToIWebElement(string definitionFileName, IWebDriver driver,string basePath = "")
+        public JsonToIWebElement(string definitionFileName, IWebDriver driver, string basePath = "")
         {
-            PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+            this.PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
 
             if (!string.IsNullOrEmpty(basePath))
             {
@@ -49,17 +61,17 @@
         }
 
         /// <summary>
-        /// Instantiate an instance of <see cref="JsonToIWebElement"/>
+        /// Initializes a new instance of the <see cref="JsonToIWebElement"/> class.
         /// </summary>
         /// <param name="definitionFile">Either a definition file name or the relative path of definition files</param>
         public JsonToIWebElement(string definitionFile)
         {
-            PageElements = new List<PageElementModel>();
+            this.PageElements = new List<PageElementModel>();
 
             if (File.Exists(definitionFile))
             {
-                PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFile));
-                this.ValidateUniqueElementNames(PageElements);
+                this.PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFile));
+                this.ValidateUniqueElementNames(this.PageElements);
                 this.ResolveElementsFromFile();
             }
             else if(Directory.Exists(definitionFile))
@@ -68,35 +80,10 @@
 
                 foreach (string fileName in fileNames)
                 {
-                    PageElements.AddRange(JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(fileName)));
+                    this.PageElements.AddRange(JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(fileName)));
                 }
 
-                this.ValidateUniqueElementNames(PageElements);
-            }
-        }
-
-        private void ResolveElementsFromFile()
-        {
-            for (int i=0; i<PageElements.Count;i++)
-            {
-                PageElementModel model = PageElements[i];
-
-                if (model.How == "file")
-                {
-                    string filePath = string.Empty;
-
-                    if (string.IsNullOrEmpty(this.basePath))
-                    {
-                        filePath = model.Definition;
-                    }
-                    else
-                    {
-                        filePath = System.IO.Path.Combine(basePath, model.Definition);
-                    }
-
-                    List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(filePath));
-                    PageElements[i] = models.Find(item => item.Name == model.Name);
-                }
+                this.ValidateUniqueElementNames(this.PageElements);
             }
         }
 
@@ -106,19 +93,21 @@
         /// <param name="definitionFileName">Definition file name to reload from</param>
         public void ReloadElementDefinition(string definitionFileName)
         {
-            PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+            this.PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
             this.ResolveElementsFromFile();
         }
 
         /// <summary>
-        /// Returns <see cref="IWebElement"/> matching the <see cref="elementName"/>/>
+        /// Returns <see cref="IWebElement" /> matching the <see cref="elementName" />/&gt;
         /// </summary>
         /// <param name="elementName">Name of the element defined in the definition file</param>
-        /// <param name="webDriver">Instance of the <see cref="IWebDriver"/> to find element</param>
-        /// <returns></returns>
-        public IWebElement GetElement (string elementName, IWebDriver webDriver = null, string elementValue = "")
+        /// <param name="webDriver">Instance of the <see cref="IWebDriver" /> to find element</param>
+        /// <param name="elementValue">The element value.</param>
+        /// <returns>Returns an instance of IWebElement</returns>
+        /// <exception cref="ElementNotFoundException"></exception>
+        public IWebElement GetElement(string elementName, IWebDriver webDriver = null, string elementValue = "")
         {
-            PageElementModel model = PageElements.Find(item => item.Name == elementName);
+            PageElementModel model = this.PageElements.Find(item => item.Name == elementName);
             if (model == null)
             {
                 throw new ElementNotFoundException(elementName);
@@ -150,13 +139,13 @@
         /// <returns>Returns all <see cref="IWebElement"/> as a <see cref="List{IWebElement}"/>/></returns>
         public List<IWebElement> GetAllElements(string definitionFileName = "")
         {
-            if (definitionFileName != "")
+            if (!string.IsNullOrEmpty(definitionFileName))
             {
-                PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
+                this.PageElements = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(definitionFileName));
             }
             List<IWebElement> elements = new List<IWebElement>();
 
-            foreach (PageElementModel element in PageElements)
+            foreach (PageElementModel element in this.PageElements)
             {
                 elements.Add(this.GetElement(element.Name));
             }
@@ -167,11 +156,12 @@
         /// <summary>
         /// Method to get definition of the element
         /// </summary>
-        /// <param name="elementName"></param>
-        /// <returns></returns>
+        /// <param name="elementName">Name of the element.</param>
+        /// <returns>Returns string</returns>
+        /// <exception cref="ElementNotFoundException"></exception>
         public string GetDefinition(string elementName)
         {
-            PageElementModel model = PageElements.Find(item => item.Name == elementName);
+            PageElementModel model = this.PageElements.Find(item => item.Name == elementName);
             if (model == null)
             {
                 throw new ElementNotFoundException(elementName);
@@ -187,7 +177,7 @@
         /// <returns><see cref="By"/> locator to find this element</returns>
         public By GetByLocator(string elementName, string elementValue = "")
         {
-            PageElementModel model = PageElements.Find(item => item.Name == elementName);
+            PageElementModel model = this.PageElements.Find(item => item.Name == elementName);
             if (model == null)
             {
                 throw new ElementNotFoundException(elementName);
@@ -203,6 +193,39 @@
             MethodInfo methodInfo = type.GetMethod(model.How);
 
             return (By)methodInfo.Invoke(null, new object[] { definition });
+        }
+
+        /// <summary>
+        /// Sets the driver.
+        /// </summary>
+        /// <param name="driver">The driver.</param>
+        public void SetDriver(IWebDriver driver)
+        {
+            this.driver = driver;
+        }
+
+        private void ResolveElementsFromFile()
+        {
+            for (int i = 0; i < this.PageElements.Count; i++)
+            {
+                PageElementModel model = this.PageElements[i];
+
+                if (model.How == "file")
+                {
+                    string filePath = string.Empty;
+
+                    if (string.IsNullOrEmpty(this.basePath))
+                    {
+                        filePath = model.Definition;
+                    }
+                    else
+                    {
+                        filePath = System.IO.Path.Combine(this.basePath, model.Definition);
+                    }
+                    List<PageElementModel> models = JsonConvert.DeserializeObject<List<PageElementModel>>(File.ReadAllText(filePath));
+                    this.PageElements[i] = models.Find(item => item.Name == model.Name);
+                }
+            }
         }
 
         private string ReplaceTokenInElementDefinition(string originalDefinition, string replaceWith)
@@ -223,11 +246,6 @@
             {
                 throw new DuplicateElementException(duplicates.Select(x => x.Key));
             }
-        }
-
-        public void SetDriver(IWebDriver driver)
-        {
-            this.driver = driver;
         }
     }
 }

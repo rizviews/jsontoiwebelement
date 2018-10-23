@@ -1,6 +1,5 @@
 ﻿namespace JsonToIWebElement.Tests
 {
-    using System;
     using FluentAssertions;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
@@ -9,12 +8,12 @@
     using Xunit;
 
     /// <summary>
-    /// 
+    /// Test for JsonToIWebElement 
     /// </summary>
     public class JsonToIWebElementTest
     {
         /// <summary>
-        /// 
+        /// Should return element from JSON.
         /// </summary>
         [Fact(Skip = "Cannot find search box element")]
         public void ShouldReturnElementFromJson()
@@ -29,7 +28,7 @@
         }
 
         /// <summary>
-        /// 
+        /// Should not return element from JSON as element name is case sensitive.
         /// </summary>
         [Fact(DisplayName = "Should not find an element in definition when case doesn't match")]
         public void ShouldNotReturnElementFromJsonCaseSensitive()
